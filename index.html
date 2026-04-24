@@ -131,3 +131,179 @@
 Анимации (через JavaScript и setTimeout).
 
 Хотите, я доработаю какой‑то блок или добавлю новую функцию?
+
+Я
+Алиса
+Конечно! Вот обновлённая версия игры с категориями — теперь пользователь видит, к какой категории относится загаданное слово.
+
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Поле чудес с Якубовичем и Шлёпой</title>
+</head>
+<body>
+    <h1>Поле чудес!</h1>
+    <p><strong>Ведущий:</strong> <span id="host">Якубович</span></p>
+    <p><strong>Гость:</strong> <span id="guest">Шлёпа</span></p>
+
+    <div>
+        <p><strong>Категория:</strong> <span id="category"></span></p>
+        <p><strong>Загаданное слово:</strong></p>
+        <div id="word-display" style="font-size: 24px; margin: 10px 0;"></div>
+    </div>
+
+    <div>
+        <label for="letter-input">Введите букву:</label>
+        <input type="text" id="letter-input" maxlength="1" size="2">
+        <button onclick="checkLetter()">Проверить</button>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <p><strong>Использованные буквы:</strong> <span id="used-letters"></span></p>
+        <p><strong>Попытки осталось:</strong> <span id="attempts-left">6</span></p>
+    </div>
+
+    <div id="message" style="margin-top: 15px; font-weight: bold;"></div>
+
+    <button onclick="startNewGame()" style="margin-top: 15px;">Новая игра</button>
+
+    <script>
+        let secretWord = '';
+        let displayedWord = [];
+        let usedLetters = [];
+        let attemptsLeft = 6;
+        let currentCategory = '';
+
+        // Словарь категорий и слов
+        const categories = {
+            'Животные': ['кот', 'собака', 'тигр', 'лев', 'заяц', 'белка'],
+            'Еда': ['яблоко', 'банан', 'пицца', 'торт', 'сыр', 'хлеб'],
+            'Города': ['Москва', 'Париж', 'Лондон', 'Берлин', 'Токио', 'Рим'],
+            'Профессии': ['врач', 'учитель', 'программист', 'повар', 'пилот', 'инженер'],
+            'Предметы': ['стол', 'стул', 'лампа', 'книга', 'ручка', 'телефон']
+        };
+
+        function startNewGame() {
+            // Выбираем случайную категорию
+            const categoryNames = Object.keys(categories);
+            currentCategory = categoryNames[Math.floor(Math.random() * categoryNames.length)];
+
+            // Выбираем случайное слово из выбранной категории
+            const wordsInCategory = categories[currentCategory];
+            secretWord = wordsInCategory[Math.floor(Math.random() * wordsInCategory.length)].toLowerCase();
+
+            displayedWord = Array(secretWord.length).fill('_');
+            usedLetters = [];
+            attemptsLeft = 6;
+
+            updateDisplay();
+            document.getElementById('message').textContent = '';
+            document.getElementById('letter-input').value = '';
+            // Показываем категорию
+            document.getElementById('category').textContent = currentCategory;
+        }
+
+        function updateDisplay() {
+            document.getElementById('word-display').textContent = displayedWord.join(' ');
+            document.getElementById('used-letters').textContent = usedLetters.join(', ') || 'ещё нет';
+            document.getElementById('attempts-left').textContent = attemptsLeft;
+        }
+
+        function checkLetter() {
+            const input = document.getElementById('letter-input');
+            const letter = input.value.toLowerCase().trim();
+
+            if (!letter || usedLetters.includes(letter)) {
+                return;
+            }
+
+            usedLetters.push(letter);
+            let isCorrect = false;
+
+            for (let i = 0; i < secretWord.length; i++) {
+                if (secretWord[i] === letter) {
+                    displayedWord[i] = letter;
+                    isCorrect = true;
+                }
+            }
+
+            if (!isCorrect) {
+                attemptsLeft--;
+            }
+
+            updateDisplay();
+            input.value = '';
+
+            if (displayedWord.join('') === secretWord) {
+                document.getElementById('message').textContent = 'Поздравляем! Вы угадали слово: ' + secretWord + ' (категория: ' + currentCategory + ')';
+            } else if (attemptsLeft <= 0) {
+                document.getElementById('message').textContent = 'Игра окончена! Загаданное слово: ' + secretWord + ' (категория: ' + currentCategory + ')';
+            }
+        }
+
+        // Запуск первой игры при загрузке страницы
+        window.onload = startNewGame;
+    </script>
+</body>
+</html>
+Что было добавлено:
+Категории слов в виде объекта categories, где:
+
+ключ — название категории (например, «Животные»);
+
+значение — массив слов этой категории.
+
+Отображение категории на экране (<span id="category"></span>).
+
+Логика выбора:
+
+сначала случайно выбирается категория;
+
+затем из неё — случайное слово.
+
+Информация в финале игры: в сообщениях о победе или поражении теперь указывается категория слова.
+
+Как это работает:
+При запуске игры (или нажатии «Новая игра»):
+
+скрипт выбирает случайную категорию из categories;
+
+внутри этой категории выбирает случайное слово;
+
+отображает название категории над загаданным словом.
+
+Игрок видит:
+
+категорию (например, «Животные»);
+
+загаданное слово в виде подчёркиваний (_ _ _);
+
+поле для ввода буквы.
+
+После завершения игры в сообщении указывается:
+
+угаданное слово;
+
+его категория.
+
+Примеры категорий и слов:
+Животные: кот, собака, тигр, лев, заяц, белка.
+
+Еда: яблоко, банан, пицца, торт, сыр, хлеб.
+
+Города: Москва, Париж, Лондон, Берлин, Токио, Рим.
+
+Профессии: врач, учитель, программист, повар, пилот, инженер.
+
+Предметы: стол, стул, лампа, книга, ручка, телефон.
+
+Как добавить свои категории:
+Просто дополните объект categories:
+
+javascript
+const categories = {
+    'Ваши_новые_слова': ['слово1', 'слово2', 'слово3'],
+    // ... остальные категории
+};
+Хотите, я добавлю ещё какие‑то функции или уточню какой‑то блок кода?
