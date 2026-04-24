@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    color: white;
+    text-align: center;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.wheel-container {
+    margin: 30px 0;
+}
+
+.wheel {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto 20px;
+    border: 5px solid gold;
+    transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.sector {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    transform-origin: bottom right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.word {
+    font-size: 32px;
+    letter-spacing: 15px;
+    min-height: 60px;
+}
+
+.letter {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-bottom: 3px solid white;
+}
+
+.controls {
+    margin: 20px 0;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    background: gold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.characters {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+.character {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
