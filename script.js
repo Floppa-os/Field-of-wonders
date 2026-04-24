@@ -57,7 +57,7 @@ function guessWord() {
     const guess = prompt('Введите загаданное слово:').toUpperCase();
     
     if (guess === word) {
-        score += 5000;
+        score += 2500;
         document.getElementById('score').textContent = score;
         alert('Поздравляем! Вы угадали слово целиком! +5000 очков!');
         endGame();
