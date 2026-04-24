@@ -2,45 +2,201 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Поле Чудес</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Поле Чудес с Якубовичем и Шлёпой!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(90deg, #800080, #FFA500);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .wheel {
+            width: 200px;
+            height: 200px;
+            border: 5px solid gold;
+            border-radius: 50%;
+            margin: 30px auto;
+            position: relative;
+            transition: transform 3s ease;
+        }
+        .sector {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        #wordDisplay {
+            font-size: 36px;
+            letter-spacing: 20px;
+            margin: 30px 0;
+        }
+        .letter {
+            border-bottom: 3px solid white;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: gold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+        .characters {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .character {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid gold;
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Поле Чудес с Якубовичем и Шлёпой!</h1>
-        
-        <div class="wheel-container">
-            <div class="wheel" id="wheel">
-                <div class="sector" style="background: #ff6b6b;">0</div>
-                <div class="sector" style="background: #4ecdc4;">500</div>
-                <div class="sector" style="background: #45b7d1;">1000</div>
-                <div class="sector" style="background: #96ceb4;">1500</div>
-                <div class="sector" style="background: #ffeaa7;">2000</div>
-                <div class="sector" style="background: #ff9ff3;">БАНКРОТ</div>
-                <div class="sector" style="background: #feca57;">ПРИЗ</div>
-                <div class="sector" style="background: #a29bfe;">5000</div>
-            </div>
-            <button onclick="spinWheel()">Крутить барабан!</button>
-        </div>
+    <h1>Поле Чудес с Якубовичем и Шлёпой!</h1>
 
-        <div class="word-container">
-            <h2>Загаданное слово:</h2>
-            <div id="wordDisplay" class="word"></div>
-        </div>
-
-        <div class="controls">
-            <input type="text" id="letterInput" maxlength="1" placeholder="Введите букву">
-            <button onclick="checkLetter()">Проверить букву</button>
-            <button onclick="guessWord()">Угадать слово целиком</button>
-            <p>Счёт: <span id="score">0</span></p>
-        </div>
-
-        <div class="characters">
-            <img src="yakubovich.jpg" alt="Якубович" class="character" id="yakubovich">
-            <img src="shlepa.jpg" alt="Шлёпа" class="character" id="shlepa">
-        </div>
+    <div class="wheel" id="wheel">
+        <div class="sector" style="background: #ff6b6b;">0</div>
+        <div class="sector" style="background: #4ecdc4;">500</div>
+        <div class="sector" style="background: #45b7d1;">1000</div>
+        <div class="sector" style="background: #96ceb4;">1500</div>
+        <div class="sector" style="background: #ffeaa7;">2000</div>
+        <div class="sector" style="background: #ff9ff3;">БАНКРОТ</div>
+        <div class="sector" style="background: #feca57;">ПРИЗ</div>
+        <div class="sector" style="background: #a29bfe;">5000</div>
     </div>
 
-    <script src="script.js"></script>
+    <button onclick="spinWheel()">Крутить барабан!</button>
+
+    <div>Загаданное слово:</div>
+    <div id="wordDisplay"></div>
+
+    <input type="text" id="letterInput" maxlength="1" placeholder="Введите букву">
+    <button onclick="checkLetter()">Проверить букву</button>
+    <button onclick="guessWord()">Угадать слово целиком</button>
+
+    <div>Счёт: <span id="score">0</span></div>
+
+    <div class="characters">
+        <div class="character" id="yakubovich">Якубович</div>
+        <div class="character" id="shlepa">Шлёпа</div>
+    </div>
+
+    <script>
+        // Список слов для игры
+        const words = ["КОТ", "СОБАКА", "ШЛЁПА", "ЯКУБОВИЧ", "ПОЛЕ", "ЧУДЕС"];
+        let currentWord = words[Math.floor(Math.random() * words.length)];
+        let guessedLetters = [];
+        let score = 0;
+
+        // Инициализация
+        initGame();
+
+        function initGame() {
+            updateWordDisplay();
+        }
+
+        function updateWordDisplay() {
+            const wordDisplay = document.getElementById('wordDisplay');
+            wordDisplay.innerHTML = '';
+            for (let letter of currentWord) {
+                const span = document.createElement('span');
+                span.className = 'letter';
+                span.textContent = guessedLetters.includes(letter) ? letter : '_';
+                wordDisplay.appendChild(span);
+            }
+        }
+
+        function checkLetter() {
+            const input = document.getElementById('letterInput');
+            const letter = input.value.toUpperCase();
+            if (letter && !guessedLetters.includes(letter)) {
+                guessedLetters.push(letter);
+                if (currentWord.includes(letter)) {
+                    const points = getRandomPoints();
+                    score += points;
+                    document.getElementById('score').textContent = score;
+                    alert(`Правильно! +${points} очков!`);
+                } else {
+                    alert('Такой буквы нет!');
+                }
+                updateWordDisplay();
+                checkWin();
+            }
+            input.value = '';
+        }
+
+        function guessWord() {
+            const guess = prompt('Введите слово целиком:').toUpperCase();
+            if (guess === currentWord) {
+                score += 5000;
+                document.getElementById('score').textContent = score;
+                alert('Вы победили! +5000 очков!');
+                endGame();
+            } else {
+                alert('Неверно!');
+            }
+        }
+
+        function spinWheel() {
+            const wheel = document.getElementById('wheel');
+            const rotation = Math.floor(Math.random() * 3600) + 360;
+            wheel.style.transform = `rotate(${rotation}deg)`;
+            setTimeout(() => {
+                const result = getWheelResult();
+                processWheelResult(result);
+            }, 3000);
+        }
+
+        function getWheelResult() {
+            const sectors = ['0', '500', '1000', '1500', '2000', 'БАНКРОТ', 'ПРИЗ', '5000'];
+            return sectors[Math.floor(Math.random() * sectors.length)];
+        }
+
+        function processWheelResult(result) {
+            switch(result) {
+                case 'БАНКРОТ':
+                    score = 0;
+                    document.getElementById('score').textContent = '0';
+                    alert('БАНКРОТ! Все очки сгорели!');
+                    break;
+                case 'ПРИЗ':
+                    alert('Вы выиграли приз — мешок Шлёп-котов!');
+                    break;
+                default:
+                    score += parseInt(result);
+                    document.getElementById('score').textContent = score;
+                    alert(`Вы выиграли ${result} очков!`);
+            }
+        }
+
+        function getRandomPoints() {
+            return Math.floor(Math.random() * 500) + 100;
+        }
+
+        function checkWin() {
+            if (guessedLetters.filter(l => currentWord.includes(l)).length === currentWord.length) {
+                alert('Вы угадали слово! Победа!');
+                endGame();
+            }
+        }
+
+        function endGame() {
+            // Здесь можно добавить перезапуск
+        }
+    </script>
 </body>
 </html>
