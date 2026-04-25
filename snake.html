@@ -8,34 +8,31 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div>Счёт: <span id="score">0</span></div>
     <script>
-        // Получаем canvas и контекст для рисования
+        // 1. Получаем элементы
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
 
-        // Настройки игры
-        const gridSize = 20; // Размер клетки
-        const tileCount = 20; // Количество клеток по ширине/высоте
+        // 2. Настройки игры
+        const gridSize = 20; // Размер клетки (пикселей)
+        const tileCount = 20; // Размер поля в клетках (20x20)
         let score = 0;
 
-        // Змейка (начинаем с левого верхнего угла, чтобы точно видеть)
-        let snake = [
-            {x: 1, y: 1} // Начальная позиция головы — угол поля
-        ];
+        // 3. Инициализация змейки (в левом верхнем углу, чтобы точно видеть)
+        let snake = [{x: 1, y: 1}];
         let velocityX = 0;
         let velocityY = 0;
         let nextVelocityX = 0;
         let nextVelocityY = 0;
 
-        // Яблоко
+        // 4. Яблоко
         let apple = {x: 5, y: 5};
 
-        // Генерируем новое яблоко
+        // Функция генерации яблока
         function generateApple() {
             apple.x = Math.floor(Math.random() * tileCount);
             apple.y = Math.floor(Math.random() * tileCount);
-
-            // Проверяем, чтобы яблоко не появилось на змейке
+            // Проверяем, чтобы яблоко не было на змее
             for (let part of snake) {
                 if (part.x === apple.x && part.y === apple.y) {
                     generateApple();
@@ -45,56 +42,32 @@
         }
 
         // Обработка клавиш
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', (e) => {
             switch (e.key) {
-                case 'ArrowUp':
-                    if (velocityY !== 1) {
-                        nextVelocityX = 0;
-                        nextVelocityY = -1;
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (velocityY !== -1) {
-                        nextVelocityX = 0;
-                        nextVelocityY = 1;
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (velocityX !== 1) {
-                        nextVelocityX = -1;
-                        nextVelocityY = 0;
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (velocityX !== -1) {
-                        nextVelocityX = 1;
-                        nextVelocityY = 0;
-                    }
-                    break;
+                case 'ArrowUp': if (velocityY !== 1) { nextVelocityX = 0; nextVelocityY = -1; } break;
+                case 'ArrowDown': if (velocityY !== -1) { nextVelocityX = 0; nextVelocityY = 1; } break;
+                case 'ArrowLeft': if (velocityX !== 1) { nextVelocityX = -1; nextVelocityY = 0; } break;
+                case 'ArrowRight': if (velocityX !== -1) { nextVelocityX = 1; nextVelocityY = 0; } break;
             }
         });
 
-        // Основной игровой цикл
+        // Основной цикл игры
         function gameLoop() {
             velocityX = nextVelocityX;
             velocityY = nextVelocityY;
 
-            // Двигаем змейку
             const head = {
                 x: snake.x + velocityX,
                 y: snake.y + velocityY
             };
 
-            // Проверка столкновений со стенами
-            if (
-                head.x < 0 || head.x >= tileCount ||
-                head.y < 0 || head.y >= tileCount
-            ) {
+            // Столкновение со стенами
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
                 resetGame();
                 return;
             }
 
-            // Проверка столкновения с собой
+            // Столкновение с собой
             for (let i = 0; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     resetGame();
@@ -102,51 +75,35 @@
                 }
             }
 
-            // Добавляем голову
             snake.unshift(head);
 
-            // Проверка, съела ли змейка яблоко
             if (head.x === apple.x && head.y === apple.y) {
                 score++;
                 scoreDisplay.textContent = score;
                 generateApple();
             } else {
-                // Удаляем хвост, если яблоко не съедено
                 snake.pop();
             }
 
-            // Отрисовываем всё
             draw();
-
-            // Запускаем следующий кадр через 100 мс
-            setTimeout(gameLoop, 100);
+            setTimeout(gameLoop, 100); // 10 кадров в секунду
         }
 
         // Отрисовка
         function draw() {
-            // Очищаем canvas
+            // Очищаем поле
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Рисуем змейку (зелёные квадраты)
+            // Рисуем змею (зелёные квадраты)
             ctx.fillStyle = 'green';
             for (let part of snake) {
-                ctx.fillRect(
-                    part.x * gridSize,
-                    part.y * gridSize,
-                    gridSize - 1,
-                    gridSize - 1
-                );
+                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 1, gridSize - 1);
             }
 
             // Рисуем яблоко (красный квадрат)
             ctx.fillStyle = 'red';
-            ctx.fillRect(
-                apple.x * gridSize,
-                apple.y * gridSize,
-                gridSize - 1,
-                gridSize - 1
-            );
+            ctx.fillRect(apple.x * gridSize, apple.y * gridSize, gridSize - 1, gridSize - 1);
         }
 
         // Сброс игры
@@ -161,7 +118,7 @@
             generateApple();
         }
 
-        // Запуск игры (эта строка ОБЯЗАТЕЛЬНА!)
+        // Запуск игры (эта строка ОБЯЗАТЕЛЬНА)
         generateApple();
         gameLoop();
     </script>
