@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>Сапёр</title>
-    <p>. закрытая клетка</p>
-    <p>F флаг</p>
 </head>
 <body>
     <h1>Сапёр</h1>
@@ -30,7 +28,8 @@
         function startGame() {
             width = parseInt(document.getElementById('width').value);
             height = parseInt(document.getElementById('height').value);
-            mineCount = parseInt(document.getElementById('mineCount').value);
+            // Исправлено: был неверный ID 'mineCount', теперь 'mines'
+            mineCount = parseInt(document.getElementById('mines').value);
             flagsRemaining = mineCount;
             document.getElementById('flags-count').textContent = flagsRemaining;
             gameOver = false;
@@ -44,6 +43,7 @@
             board = Array(height).fill().map(() => Array(width).fill(0));
             revealed = Array(height).fill().map(() => Array(width).fill(false));
             flags = Array(height).fill().map(() => Array(width).fill(false));
+
 
             // Расставляем мины
             let minesPlaced = 0;
@@ -62,30 +62,30 @@
                     if (board[y][x] === -1) continue;
 
                     let count = 0;
-            for (let dy = -1; dy <= 1; dy++) {
-                for (let dx = -1; dx <= 1; dx++) {
-                    const nx = x + dx;
-                    const ny = y + dy;
-                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && board[ny][nx] === -1) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            if (nx >= 0 && nx < width && ny >= 0 && ny < height && board[ny][nx] === -1) {
                         count++;
                     }
-                }
-            }
-            board[y][x] = count;
         }
     }
+    board[y][x] = count;
+}
+}
 }
 
 function renderBoard() {
     const boardElement = document.getElementById('game-board');
     boardElement.innerHTML = '';
     const table = document.createElement('table');
+    table.border = '1'; // Простая граница без CSS
 
     for (let y = 0; y < height; y++) {
         const row = document.createElement('tr');
         for (let x = 0; x < width; x++) {
             const cell = document.createElement('td');
-            cell.style.border = '1px solid black';
             cell.style.width = '30px';
             cell.style.height = '30px';
             cell.style.textAlign = 'center';
